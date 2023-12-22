@@ -1,0 +1,14 @@
+export const TOGGLE_SIDEBAR = "TOGGLE_SIDEBAR";
+export const SHOW_PANEL = "SHOW_PANEL";
+export const TOGGLE_SUB_PANEL = "TOGGLE_SUB_PANEL";
+
+export const TOGGLE_THEME = "TOGGLE_THEME";
+export const TOGGLE_SIDEBAR_FLOATING = "TOGGLE_SIDEBAR_FLOATING";
+
+
+export const SET_USER_DEVICE = "SET_USER_DEVICE";
+
+
+
+
+
