@@ -28,6 +28,11 @@ export interface User {
   nid_back_image?: string;
 }
 
+export interface UserLoginData {
+  username: string;
+  password: string;
+}
+
 export interface UserState {
   user: User;
   token: string;

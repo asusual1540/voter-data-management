@@ -74,7 +74,7 @@ const Header = () => {
                     height={30}
                     className="hidden dark:block"
                   />
-                  <p className="w-full text-lg font-bold ml-2">ভোটার ডাটা ম্যানেজমেন্ট</p>
+                  <p className="w-full text-lg font-bold ml-2">ভোটার তথ্য ব্যবস্থাপনা</p>
                 </div>
 
               </Link>

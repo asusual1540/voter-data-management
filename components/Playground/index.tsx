@@ -11,12 +11,13 @@ import LoginForm from "../Form/LoginForm";
 import Search from "./Search";
 import Voter from "./Voter";
 import Slip from "./Slip";
+import { useValidateUserToken } from "@/hooks/useValidateUserToken";
 
 const PlaygroundSection = () => {
   let user_state = useSelector((state: ApplicationState) => state.user_state)
   let dispatch = useDispatch()
   let setting_state = useSelector((state: ApplicationState) => state.setting_state)
-  // let { isLoading, isFetching, isError, data, error } = useValidateUserToken(user_state.token)
+  let { isLoading, isFetching, isError, data, error } = useValidateUserToken(user_state.token)
 
   useEffect(() => {
 
@@ -55,7 +56,7 @@ const PlaygroundSection = () => {
 
               {setting_state.panels.map((panel, index) => {
 
-                if (panel.slug == PanelSlug["LOGIN"] && panel.shown) {
+                if (panel.slug == PanelSlug["LOGIN"] && panel.shown && !user_state.authenticated) {
                   return <motion.div
                     className="m-1 w-full my-auto"
                     key={index}

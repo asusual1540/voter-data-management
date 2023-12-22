@@ -72,17 +72,22 @@ const reducers: Reducer<SettingState> = (state = initialSettingState, action: Se
   switch (action.type) {
     case REHYDRATE: {
       // Check if persisted state exists
-      // if (action.payload) {
-      //   return {
-      //     ...state,
-      //     error: action.payload.setting_state.error,
-      //     loading: action.payload.setting_state.loading,
-      //     id: action.payload.setting_state.id,
-      //   };
-      // } else {
-      //   return { ...state }
-      // }
-      return { ...state }
+      if (action.payload) {
+        return {
+          ...state,
+          id: action.payload.setting_state.id,
+          error: action.payload.setting_state.error,
+          loading: action.payload.setting_state.loading,
+          device: action.payload.setting_state.device,
+          sidebar: action.payload.setting_state.sidebar,
+          sidebar_floating: action.payload.setting_state.sidebar_floating,
+          theme: action.payload.setting_state.theme,
+          panels: action.payload.setting_state.panels
+        };
+      } else {
+        return { ...state }
+      }
+      // return { ...state }
 
     };
 

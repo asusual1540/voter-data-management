@@ -6,6 +6,7 @@ export default function Search() {
     return (
         <div className=''>
             <Input
+                size='md'
                 label="Search"
                 isClearable
                 radius="lg"

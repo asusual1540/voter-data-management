@@ -39,19 +39,19 @@ const reducers: Reducer<UserState> = (state = initialUserState, action: UserActi
   switch (action.type) {
     case REHYDRATE: {
       // Check if persisted state exists
-      // if (action.payload) {
-      //   return {
-      //     ...state,
-      //     user: { ...action.payload.user_state.user },
-      //     token: action.payload.user_state.token,
-      //     error: action.payload.user_state.error,
-      //     loading: action.payload.user_state.loading,
-      //     authenticated: action.payload.user_state.authenticated
-      //   };
-      // } else {
-      //   return { ...state }
-      // }
-      return { ...state }
+      if (action.payload) {
+        return {
+          ...state,
+          user: { ...action.payload.user_state.user },
+          token: action.payload.user_state.token,
+          error: action.payload.user_state.error,
+          loading: action.payload.user_state.loading,
+          authenticated: action.payload.user_state.authenticated
+        };
+      } else {
+        return { ...state }
+      }
+      // return { ...state }
 
     };
     case LOGOUT_USER:
