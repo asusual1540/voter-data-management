@@ -27,6 +27,7 @@ const checkUserToken = async (token: string, dispatch) => {
             dispatch({
                 type: UserActions.CHECK_USER_SUCCESS, payload: payload
             })
+
         }
         if (response.data.status == "success") {
             console.log("response.data.status ---->", response.data.status)

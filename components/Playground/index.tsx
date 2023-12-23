@@ -49,7 +49,7 @@ const PlaygroundSection = () => {
   return (
     <>
       <PlaygroundHeader />
-      <section id="playground" className="bg-white">
+      <section id="playground" className="bg-white dark:bg-bdDarkBg">
         <div className="flex justify-center items-center">
           <div className="xxs:w-full xs:w-[400px] sm:w-[500px] md:w-[600px] lg:w-[800px]">
             <div className={`flex justify-center items-start relative w-full p-1 cards-container border-b border-pdfLightHover dark:border-dgenDarkBorder ${user_state.authenticated ? "min-h-[94svh]" : "min-h-[100svh]"}`}>

@@ -3,14 +3,14 @@ import { combineReducers } from "redux";
 
 import userReducer from "./user/userReducer";
 import settingReducer from "./setting/settingReducer";
-import postReducer from "./post/postReducer";
+import voterReducer from "./voter/voterReducer";
 
 
 
 const rootReducer = combineReducers({
   user_state: userReducer,
   setting_state: settingReducer,
-  post_state: postReducer,
+  voter_state: voterReducer,
 });
 
 export type ApplicationState = ReturnType<typeof rootReducer>;

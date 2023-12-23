@@ -17,35 +17,34 @@ import {
     Pagination,
     Selection,
     ChipProps,
-    SortDescriptor
+    SortDescriptor,
+    Avatar
 } from "@nextui-org/react";
 import { PlusIcon } from "./icons/PlusIcon";
 import { VerticalDotsIcon } from "./icons/VerticalDotsIcon";
 import { ChevronDownIcon } from "./icons/ChevronDownIcon";
 import { SearchIcon } from "./icons/SearchIcon";
-import { columns, users, statusOptions } from "./data";
+import { TableColumnData, Voter } from "@/store/reducers/voter/types";
+import { useSelector } from "react-redux";
+import { ApplicationState } from "@/store/reducers/rootReducer";
 
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
-};
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "download", "voter_no", "father_name", "mother_name", "occupation", "address", "gender", "district", "sub_district", "city_corporation", "union", "ward_no", "voter_area", "actions"];
 
-type User = typeof users[0];
+
 
 function capitalize(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export default function App() {
+    let voter_state = useSelector((state: ApplicationState) => state.voter_state)
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: "age",
         direction: "ascending",
@@ -56,27 +55,27 @@ export default function App() {
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
+        if (visibleColumns === "all") return voter_state.columns;
 
-        return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+        return voter_state.columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...users];
+        let filteredVoters = [...voter_state.voters];
 
         if (hasSearchFilter) {
-            filteredUsers = filteredUsers.filter((user) =>
-                user.name.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredVoters = filteredVoters.filter((voter) =>
+                voter.name.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-            filteredUsers = filteredUsers.filter((user) =>
-                Array.from(statusFilter).includes(user.status),
-            );
-        }
+        // if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+        //     filteredVoters = filteredVoters.filter((voter) =>
+        //         Array.from(statusFilter).includes(voter.status),
+        //     );
+        // }
 
-        return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+        return filteredVoters;
+    }, [voter_state.voters, filterValue, statusFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -88,41 +87,37 @@ export default function App() {
     }, [page, filteredItems, rowsPerPage]);
 
     const sortedItems = React.useMemo(() => {
-        return [...items].sort((a: User, b: User) => {
-            const first = a[sortDescriptor.column as keyof User] as number;
-            const second = b[sortDescriptor.column as keyof User] as number;
+        return [...items].sort((a: Voter, b: Voter) => {
+            const first = a[sortDescriptor.column as keyof Voter] as number;
+            const second = b[sortDescriptor.column as keyof Voter] as number;
             const cmp = first < second ? -1 : first > second ? 1 : 0;
 
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-        const cellValue = user[columnKey as keyof User];
+    const renderCell = React.useCallback((voter: Voter, columnKey: React.Key) => {
+        const cellValue = voter[columnKey as keyof Voter];
 
         switch (columnKey) {
             case "name":
                 return (
-                    <User
-                        avatarProps={{ radius: "lg", src: user.avatar }}
-                        description={user.email}
-                        name={cellValue}
-                    >
-                        {user.email}
-                    </User>
-                );
-            case "role":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
-                        <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
+                    <div className="flex items-center">
+                        <Avatar showFallback src='' size="sm" classNames={{ icon: "text-white" }} isBordered />
+                        <p className="ml-4">{voter.name}</p>
                     </div>
+
                 );
-            case "status":
+            case "download":
                 return (
-                    <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-                        {cellValue}
-                    </Chip>
+                    <div className="relative flex justify-end items-center gap-2">
+                        <Button isIconOnly size="sm" color="default" aria-label="Like">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#ffffff" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+
+                        </Button>
+                    </div>
                 );
             case "actions":
                 return (
@@ -192,7 +187,7 @@ export default function App() {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                                     Status
@@ -212,7 +207,7 @@ export default function App() {
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
@@ -227,7 +222,7 @@ export default function App() {
                                 selectionMode="multiple"
                                 onSelectionChange={setVisibleColumns}
                             >
-                                {columns.map((column) => (
+                                {voter_state.columns.map((column) => (
                                     <DropdownItem key={column.uid} className="capitalize">
                                         {capitalize(column.name)}
                                     </DropdownItem>
@@ -240,7 +235,7 @@ export default function App() {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {users.length} users</span>
+                    <span className="text-default-400 text-small">Total {voter_state.voters.length} voters</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
@@ -250,6 +245,7 @@ export default function App() {
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>
+                            <option value="20">20</option>
                         </select>
                     </label>
                 </div>
@@ -261,7 +257,7 @@ export default function App() {
         visibleColumns,
         onSearchChange,
         onRowsPerPageChange,
-        users.length,
+        voter_state.voters.length,
         hasSearchFilter,
     ]);
 
@@ -312,7 +308,7 @@ export default function App() {
             onSortChange={setSortDescriptor}
         >
             <TableHeader columns={headerColumns}>
-                {(column) => (
+                {(column: TableColumnData) => (
                     <TableColumn
                         key={column.uid}
                         align={column.uid === "actions" ? "center" : "start"}
@@ -322,7 +318,7 @@ export default function App() {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={"No users found"} items={sortedItems}>
+            <TableBody emptyContent={"No voters found"} items={sortedItems}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
